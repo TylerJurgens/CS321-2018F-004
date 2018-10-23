@@ -1,4 +1,4 @@
-
+ 
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -55,8 +55,10 @@ public class GameClient {
         System.out.println("  LEFT          - Turns your player left 90 degrees.");
         System.out.println("  RIGHT         - Turns your player right 90 degrees.");
         System.out.println("  MOVE distance - Tries to walk forward <distance> times.");
-        System.out.println("  PICKUP obect  - Tries to pick up an object in the same area.");
+        System.out.println("  PICKUP object  - Tries to pick up an object in the same area.");
         System.out.println("  INVENTORY     - Shows you what objects you have collected.");
+        System.out.println("  POKE_GHOUL    - Pokes the ghoul in the current room.");
+        System.out.println("  GIVE_GHOUL object   - Gives object to ghoul in current room");
         System.out.println("  QUIT          - Quits the game.");
         System.out.println();
         
@@ -189,7 +191,18 @@ public class GameClient {
                     break;
                 case "INVENTORY":
                     System.out.println(remoteGameInterface.inventory(this.playerName));
-                    break;                                                            
+                    break;
+				case "POKE_GHOUL":
+					System.out.println(remoteGameInterface.pokeGhoul(this.playerName));
+					break;
+				case "GIVE_GHOUL":
+					if(tokens.isEmpty()) {
+                        System.err.println("You need to provide an object to give.");
+                    }
+                    else {
+                        System.out.println(remoteGameInterface.giveToGhoul(tokens.remove(0), this.playerName));
+                    }
+					break;	
                 case "QUIT":
                     remoteGameInterface.leave(this.playerName);
                     runListener = false;
