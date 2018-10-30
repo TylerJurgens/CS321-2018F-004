@@ -2,6 +2,8 @@
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.LinkedList;
+import java.io.IOException;
 
 /**
  *
@@ -74,18 +76,19 @@ public class GameCore implements GameCoreInterface {
 						room.hasGhoul = true;
 						GameCore.this.broadcast(room, "You see a Ghoul enter this room");
 
-					} catch (InterruptedException ex) {
-						Logger.getLogger(GameObject.class.getName()).log(Level.SEVERE, null, ex);
-					}
-				}
-			}
-		});
-
-		objectThread.setDaemon(true);
-		awakeDayGhoul.setDaemon(true);
-		objectThread.start();
-		awakeDayGhoul.start();
-	}
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(GameObject.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+		
+        objectThread.setDaemon(true);
+        awakeDayGhoul.setDaemon(true);
+        objectThread.start();
+        awakeDayGhoul.start();
+    }
+	
 
 	public void ghoulWander(Ghoul g, Room room) {
 		Random rand = new Random();
@@ -105,6 +108,44 @@ public class GameCore implements GameCoreInterface {
 				return;
 			}
 		}
+    }
+
+	public String bribeGhoul(String playerName, String item){
+		item = item.toLowerCase();
+		Player player = playerList.findPlayer(playerName);
+		Room room = this.map.findRoom(player.getCurrentRoom());
+		if(player == null){
+			return null;
+		}
+		if(room.hasGhoul){
+			LinkedList<String> itemList = player.getCurrentInventory();
+			boolean giveAble = false;
+			for (String thing : itemList){
+				if(thing.equalsIgnoreCase(item)){
+					giveAble = itemList.remove(thing);
+					break;			
+				}
+			}
+
+			if(giveAble){
+				try {
+					GhoulLog myLog = new GhoulLog();
+					myLog.glLog("GameCore","bribeGhoul", "Player" + " " + playerName + " has just given a " + item + " to the Ghoul");
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+				
+				ghoul.modifyAngryLevel(-1);
+				int angryLv = ghoul.getAngryLevel();
+				String message = "Ghoul gets " + item + ", " + "and its anger level decreases to " + angryLv + ".";
+				return  message;
+			}else{
+				return "Do not have this item......";
+			}
+		}else{
+			return "No Ghoul in this room";
+		}
+		
 	}
 
 	public String pokeGhoul(String playerName) {
@@ -116,47 +157,26 @@ public class GameCore implements GameCoreInterface {
 				return "There is no ghoul in this room.";
 			}
 
-			ghoul.increaseAngryLevel(1);
-
-			// Return a different string depending on ghoul's anger level
+			try {
+				GhoulLog myLog = new GhoulLog();
+				myLog.glLog("GameCore","pokeGhoul", "Player" + " " + playerName + " has just poked the Ghoul");
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			
+			ghoul.modifyAngryLevel(1);
 			int angerLvl = ghoul.getAngryLevel();
-			System.out.println("angerlvl" + angerLvl);
-			if (angerLvl == 1)
-				return "Ghoul: Leave me alone.";
-			if (angerLvl == 2)
-				return "Ghoul: Cut that out.";
-			if (angerLvl == 3)
-				return "Ghoul: You better quit that.";
-			if (angerLvl == 4)
-				return "Ghoul: You're making me pretty mad.";
-			if (angerLvl == 5)
-				return "Ghoul: You're really starting to get on my nerves.";
-			if (angerLvl == 6)
-				return "Ghoul: This is the last straw.";
-			if (angerLvl == 7) {
+			if (angerLvl >= 7) {
 				ghoul.Drag(player);
 				draggedToSpawn(player);
-				return "Ghoul: That's it! You're done for!";
 			}
-			if (angerLvl == 8) {
-				ghoul.Drag(player);
-				draggedToSpawn(player);
-				return "Ghoul: I'm going to get you now!";
-			}
-			if (angerLvl == 9) {
-				ghoul.Drag(player);
-				draggedToSpawn(player);
-				return "Ghoul: GAAAHHH You're going to regret that!";
-			} else {
-				ghoul.Drag(player);
-				draggedToSpawn(player);
-				return "Ghoul: AAAAHHHHHHH I'M GOING TO GRAB THAT FINGER AND SNAP IT IN HALF!";
-			}
+			return ("Ghoul anger level has increased to " + angerLvl);
 		} else {
 			return null;
 		}
 	}
 
+	//Same functionality as bribe_ghoul, not currently used
 	public String giveToGhoul(String object, String playerName) {
 		Player player = playerList.findPlayer(playerName);
 		Room room = this.map.findRoom(player.getCurrentRoom());
@@ -176,7 +196,7 @@ public class GameCore implements GameCoreInterface {
 					return "you don't have" + object + "!";
 				}
 				player.getCurrentInventory().remove(object);
-				ghoul.decreaseAngryLevel(1);
+				ghoul.modifyAngryLevel(-1);
 				return("the ghoul is a little more calm");
 			}
 		}

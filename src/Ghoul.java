@@ -27,14 +27,17 @@ public class Ghoul{
 		this.currentRoom = room;
 	}
 	
-	public void increaseAngryLevel(int amount) {
+	public void modifyAngryLevel(int amount) {
 		this.angryLevel += amount;
-		System.out.println(amount);
-	}
-	
-	public void decreaseAngryLevel(int amount) {
-		this.angryLevel -= amount;
-		System.out.println(amount);
+
+		//add some error check......
+		if(this.angryLevel > 10){
+			this.angryLevel = 10;
+		}else if (this.angryLevel < 0){
+			this.angryLevel = 0;
+		}
+		
+		return; 
 	}
 	
 	public void Drag(Player p){
@@ -46,7 +49,7 @@ public class Ghoul{
 			e.printStackTrace();
 		}
 		p.getReplyWriter().println("The Ghoul knocks you unconscious!");
-		increaseAngryLevel(-1);
+		modifyAngryLevel(-1);
 		
 		}
 	}
