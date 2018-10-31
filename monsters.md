@@ -11,12 +11,13 @@
 		A player can give an item to the ghoul, using the 'bribe_ghoul (item name)' input. 
 		If the item you are planning to give is in your inventory, 
 		then the ghoul's anger level will go down and you get a message saying so.
-		If the ghoul's anger level is at 
+		If the ghoul's anger level is at 0, it will take your item, but it's anger won't
+		get lowered.
 ##### Ghoul's Dragging Ability:
 		When the ghoul's anger level is poked to above 7, 
 		the ghoul will knock the player who poked it unconscious, 
 		then drag them to the clock tower. 
 		Then, it will proceed to take a random item
-		from the player's inventory, and lowers its anger by 1.
+		from the player's inventory (if they have one), and lowers its anger by 1.
 Example from in game: ![Ghoul Anger Manipulation](https://github.com/TylerJurgens/CS321-2018F-004/blob/dragReadMe/screenshotreadme.PNG)
       
