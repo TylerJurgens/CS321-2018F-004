@@ -102,7 +102,7 @@ The only modification made to GameCore.java is in the public String move() metho
 ![example log](./log_example.png)	
 
 ## Contributors
-Ghoul Thread/Wandering - YuQiao
-Ghosts - Tyler
-Ghoul Logging - Aleksa
-Ghoul Anger - Krishna
+#### Ghoul Thread/Wandering - YuQiao
+#### Ghosts - Tyler
+#### Ghoul Logging - Aleksa
+#### Ghoul Anger - Krishna
