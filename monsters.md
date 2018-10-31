@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Ghoul's anger level:
 The Ghoul has an anger level (starting at 0, the lowest), 
 which is altered through the user's interactions with the ghoul.
