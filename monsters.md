@@ -4,6 +4,9 @@
 
 When a player moves to a new room, there is a small chance that a ghost will appear in that room. If a ghost appears, it will say something spooky/funny, then quickly disappear from the room.
 
+*The following picture shows what happens when a ghost appears in a room you enter.*
+![The ghost appears, says something spooky, then disappears.](./ghost_readme_image.png)
+
 ## Ghost Guide for Developers
 
 Two classes were modified for the implementation of ghosts in this game. They are Ghost.java and GameCore.java.
