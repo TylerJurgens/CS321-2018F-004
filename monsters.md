@@ -15,3 +15,5 @@
 		When the ghoul's anger level is poked to above 7, the ghoul will knock the player who poked it
 		unconscious, then drag them to the clock tower. Then, it will proceed to take a random item
 		from the player's inventory, and lowers its anger by 1.
+Example from in game: ![alt text](CS321-2018F-004/screenshotreadme.PNG)
+      
