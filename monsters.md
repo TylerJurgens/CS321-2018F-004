@@ -24,7 +24,7 @@
 	will be SEVERE. The message that will be displayed in the log: "Player" + " " + playerName + " has just poked the Ghoul". 
 ---
 ## Images
-	![example log](images/example.png)	
+	![example log](./log_example.png)	
 ---
 ## Contributor 
 
