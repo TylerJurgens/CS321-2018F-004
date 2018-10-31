@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Ghoul's anger level:
 The Ghoul has an anger level (starting at 0, the lowest), 
 which is altered through the user's interactions with the ghoul.
@@ -20,4 +21,3 @@ Then, it will proceed to take a random item
 from the player's inventory, and lowers its anger by 1.
 
 Example from in game: ![Ghoul Anger Manipulation](./screenshotreadme.PNG)
-      
