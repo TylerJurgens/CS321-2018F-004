@@ -395,10 +395,37 @@ public class GameCore implements GameCoreInterface {
 			}
 			String curSpirit = room.getSpirit();
 			room.removeSpirit();
+			player.capture_spirit(curSpirit);
 			return "You have captured a " + curSpirit;
 		} else {
 			return null;
 		}
+	}
+	/**
+	 * Shows a list of captured spirits by a player
+	 * @param playerName Player name
+	 * @return String message of spirits captured by a player
+	 */
+	public String capturedSpirits(String playerName){
+		Player player = playerList.findPlayer(playerName);
+		String result = "";
+		for(String s : player.getCapturedSpirits()){
+			result += " " + s;
+		}
+		return "Spirits captured by " + player.getName() + ": " + result;
+	}
+	/**
+	 * Shows a list of spirits not captured by a player
+	 * @param playerName Player name
+	 * @return String message of spirits not captured by a player
+	 */
+        public String uncapturedSpirits(String playerName){
+		Player player = playerList.findPlayer(playerName);
+		String result = "";
+		for(String s : player.getUncapturedSpirits()){
+			result += " " + s;
+		}
+		return "Spirits  not captured by " + player.getName() + ": " + result;
 	}
 		
     /**
@@ -1311,6 +1338,12 @@ public class GameCore implements GameCoreInterface {
 	@Override
 	public Player leave(String name) {
 		Player player = this.playerList.findPlayer(name);
+		try {
+				CapturedSpirits cs = new CapturedSpirits();
+				cs.spiritLog(capturedSpirits(name));
+			} catch (Exception e){
+				e.printStackTrace();
+			}
 		if (player != null) {
 			this.broadcast(player, "You see " + player.getName() + " heading off to class.");
 			this.playerList.removePlayer(name);
