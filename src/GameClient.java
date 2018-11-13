@@ -583,6 +583,19 @@ public class GameClient {
                         System.out.println("Invalid option.");
                     }
                     break;
+                case "FIGHT":
+                    if(tokens.isEmpty()){
+                      System.err.println("You need to provide either rock, paper or scissors");
+                    }
+                    else{
+                      String options = tokens.remove(0);
+                      options = options.toUpperCase();
+                      if(options.equals("ROCK") || options.equals("PAPER") || options.equals("SCISSORS"))
+                        System.out.println(remoteGameInterface.ghoulRPS(this.playerName, options));
+                      else
+                        System.out.println("Invalid option.");
+                    }
+                    break;   
                 case "TEACH":
                     System.out.println(remoteGameInterface.teach(this.playerName));
                     break;
