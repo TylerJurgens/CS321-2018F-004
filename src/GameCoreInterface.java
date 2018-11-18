@@ -40,6 +40,7 @@ public interface GameCoreInterface {
 	 * @return String message of spirits not captured by a player
 	 */
         public String uncapturedSpirits(String playerName);
+	
 
 	/**
 	 * Bribe the ghoul in the current room

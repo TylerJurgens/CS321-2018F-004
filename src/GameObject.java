@@ -114,6 +114,8 @@ public class GameObject extends UnicastRemoteObject implements GameObjectInterfa
         public String uncapturedSpirits(String playerName) throws RemoteException{
 		return core.uncapturedSpirits(playerName);
 }
+
+
 	//public String giveToGhoul(String object, String playerName) {
 	//	return core.giveToGhoul(object, playerName);
 	//}

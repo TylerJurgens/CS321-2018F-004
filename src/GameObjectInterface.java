@@ -51,7 +51,7 @@ public interface GameObjectInterface extends Remote {
 	 * @throws RemoteException
 	 */
         public String uncapturedSpirits(String playerName) throws RemoteException;
-	
+
     /**
      * Sends a request to join the game.  
      * Returns with the status of the join.  On true, the server expects the client

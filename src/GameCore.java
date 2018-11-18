@@ -40,7 +40,8 @@ public class GameCore implements GameCoreInterface {
 	private Logger playerLogger = Logger.getLogger("connections");
 	private FriendsManager friendsManager;
 	private final Object friendsLock = new Object();
-    
+	private CapturedSpirits cs;
+        private ArrayList<String> spir;
     /**
 	 * Creates a new GameCoreObject. Namely, creates the map for the rooms in the
 	 * game, and establishes a new, empty, player list.
@@ -58,6 +59,18 @@ public class GameCore implements GameCoreInterface {
         this.dailyLogger = new DailyLogger();
         dailyLogger.write("SERVER STARTED");
         playerList = new PlayerList(); 
+	this.cs = new CapturedSpirits();
+	this.spir = new ArrayList<String>();
+	try{
+					File f = new File("./spiritTypes.txt");
+					Scanner scan = new Scanner(f);
+			
+					for(int i = 0; i < 20; i++){
+					spir.add(scan.nextLine());
+					}
+				} catch (Exception e){
+					e.printStackTrace();			
+				}  
         
         // Builds a list of shops mapped to their map id (can be expanded as needed)
         shoplist = new HashMap<Integer,Shop>();
@@ -153,7 +166,10 @@ public class GameCore implements GameCoreInterface {
 						ArrayList<String> spirits = new ArrayList<String>();
 						//Add all spirit types here: ex: happy, sad, scary, etc.
 						spirits.add("test");
-						
+						spirits.add("happy");
+						spirits.add("sad");
+						spirits.add("scary");
+					
 						while(true) {
 							try {
 								//A random spirit will appear in a random room every 20-30 seconds
@@ -409,10 +425,12 @@ public class GameCore implements GameCoreInterface {
 	public String capturedSpirits(String playerName){
 		Player player = playerList.findPlayer(playerName);
 		String result = "";
+		if(player.getCapturedSpirits().isEmpty())
+		return "No spirits captured yet " + player.getName() + ". Try harder lazy!";
 		for(String s : player.getCapturedSpirits()){
 			result += " " + s;
 		}
-		return "Spirits captured by " + player.getName() + ": " + result;
+		return "Spirits captured by " + player.getName() + ": " + result + ".";
 	}
 	/**
 	 * Shows a list of spirits not captured by a player
@@ -422,11 +440,14 @@ public class GameCore implements GameCoreInterface {
         public String uncapturedSpirits(String playerName){
 		Player player = playerList.findPlayer(playerName);
 		String result = "";
+		if(player.getUncapturedSpirits().isEmpty())
+		return "Congratulation " + player.getName() + "!!! All spirits are captured!";
 		for(String s : player.getUncapturedSpirits()){
 			result += " " + s;
 		}
-		return "Spirits  not captured by " + player.getName() + ": " + result;
+		return "Spirits  not captured by " + player.getName() + ": " + result + ".";
 	}
+	
 		
     /**
      * 605B_buy_method
@@ -745,6 +766,8 @@ public class GameCore implements GameCoreInterface {
 				return null;
 			player = resp.player;
 			this.playerList.addPlayer(player);
+			if(player.getCapturedSpirits().isEmpty())
+			player.setUncapturedSpirit(spir);			
 
 			this.broadcast(player, player.getName() + " has arrived.");
 			connectionLog(true, player.getName());
@@ -1339,7 +1362,7 @@ public class GameCore implements GameCoreInterface {
 	public Player leave(String name) {
 		Player player = this.playerList.findPlayer(name);
 		try {
-				CapturedSpirits cs = new CapturedSpirits();
+			
 				cs.spiritLog(capturedSpirits(name));
 			} catch (Exception e){
 				e.printStackTrace();

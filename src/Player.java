@@ -41,7 +41,6 @@ public class Player {
     private ArrayList<String> captured_spirits;
     private ArrayList<String> uncaptured_spirits;
     
-    
 	public Player(@JsonProperty("name") String name, @JsonProperty("recovery") ArrayList<String> recovery) {
         this.currentRoom = 1;
         this.currentDirection = Direction.NORTH;
@@ -50,6 +49,7 @@ public class Player {
         this.currentInventory = new LinkedList<>();
 	this.captured_spirits = new ArrayList<String>();
 	this.uncaptured_spirits = new ArrayList<String>();
+ 
         this.money = 0;
     }
 
@@ -216,6 +216,14 @@ public class Player {
 	return this.uncaptured_spirits;
 }
     /**
+     * setter method for uncaptured spirits
+     * @return void
+     */
+    public void setUncapturedSpirit(ArrayList<String> spirit_new){
+	this.uncaptured_spirits = spirit_new;
+}
+  
+    /**
      *
      * @param spirit to be captured
      * @return void
@@ -225,7 +233,8 @@ public class Player {
 	/* if the spirit is in the list of total spirits then it means
 	   it hasn't been caught and now it is, and can be added to the 
 	   list of captured ones */
-	if(this.uncaptured_spirits.remove(spirit) == true)
+	   boolean b = this.uncaptured_spirits.remove(spirit);
+	   if(b == true) 
 		this.captured_spirits.add(spirit);
     }	
 

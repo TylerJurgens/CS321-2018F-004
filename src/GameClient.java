@@ -444,10 +444,10 @@ public class GameClient {
 			System.out.println(remoteGameInterface.capture(this.playerName));
 			break;
                 case "SPIRIT_LIST_ALL":
-			System.out.println(remoteGameInterface.capturedSpirits(this.playerName));
+				System.out.println(remoteGameInterface.capturedSpirits(this.playerName));
 			break;
                 case "SPIRIT_LIST_MISSING":
-			System.out.println(remoteGameInterface.uncapturedSpirits(this.playerName));
+				System.out.println(remoteGameInterface.uncapturedSpirits(this.playerName));
 			break;
 		case "DROP":
                     if(tokens.isEmpty()) {

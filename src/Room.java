@@ -71,7 +71,7 @@ public class Room {
 	}
 	
 	public String getSpirit() {
-		return (this.spirit == null) ? ("None.") : (this.spirit + " spirit.");
+		return (this.spirit == null) ? ("None.") : (this.spirit);
 	}
 	
 	public boolean hasSpirit() {
