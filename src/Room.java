@@ -19,7 +19,7 @@ public class Room {
     //list of NPCs in a room, list in case additional NPCs are added to the game
     private final LinkedList<NPC> npcs;
     //add tem state check for ghoul//never use it......
-        public boolean hasGhoul = false;
+        private boolean hasGhoul = false;
 	private String spirit;
 	private LinkedList<Ghoul> ghouls;
 
@@ -64,19 +64,43 @@ public class Room {
         result += "You are facing: " + player.getCurrentDirection() + "\n";
         return result;
     }
-    
+    	/**
+	* add ghoul
+	* @param g ghoul will be added.
+	* @return if the ghoul were added successfully. 
+	*/
 	public boolean addGhoul(Ghoul g){
 		boolean inf = this.ghouls.add(g);
 		this.hasGhoul = !(this.ghouls.isEmpty());
 		return inf;
 	}
+
+    	/**
+	* remove ghoul
+	* @param g ghoul will be removed.
+	* @return if the ghoul were removed successfully. 
+	*/
 	public boolean removeGhoul(Ghoul g){
 		boolean inf = this.ghouls.remove(g);
 		this.hasGhoul = !(this.ghouls.isEmpty());
 		return inf;
 	}
+
+    	/**
+	* given all ghoul in the room
+	* @return ghoul's collection in this room. 
+	*/
 	public LinkedList<Ghoul> getGhouls(){
 		return this.ghouls;
+	}
+
+    	/**
+	* check if any ghoul in the room
+	* @return if the ghouls in the room. 
+	*/
+	public boolean hasGhoul(){
+		this.hasGhoul = !(this.ghouls.isEmpty());
+		return this.hasGhoul;
 	}
 
     public LinkedList<Room> getNearByRoom(Map map) {
@@ -90,18 +114,34 @@ public class Room {
 	return rooms;
     }
 
+    	/**
+	* add spirit in this room
+	* @param sp spirit want to add to this room. 
+	*/
     public void addSpirit(String sp) {
 		this.spirit = sp;
 	}
 	
+    	/**
+	* remove spirit in this room
+	* @param sp spirit want to remove from this room. 
+	*/
 	public void removeSpirit() {
 		this.spirit = null;
 	}
 	
+    	/**
+	* get spirit in this room
+	* @return spirit in this room. 
+	*/
 	public String getSpirit() {
 		return (this.spirit == null) ? ("None.") : (this.spirit + " spirit.");
 	}
 	
+    	/**
+	* check if any spirit in the room
+	* @return if any spirit in the room. 
+	*/
 	public boolean hasSpirit() {
 		return this.spirit != null;
 	}

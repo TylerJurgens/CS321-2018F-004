@@ -61,6 +61,12 @@ public interface GameCoreInterface {
      * @param message Message to broadcast.
      */   
     public void broadcast(Room room, String message);
+
+    /**
+    * Broadcasts a message to all room. 
+    * @param message Message to broadcast.
+    */
+    public void broadcast(String message);
     
     
     /**

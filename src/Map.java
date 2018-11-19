@@ -94,6 +94,8 @@ public class Map{
         return map.get(rand.nextInt(map.size()));
     }
     
+
+
     /**
      * @author Group 4: King
      * Checks that room the player is contains a shop
