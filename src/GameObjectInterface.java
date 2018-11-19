@@ -462,4 +462,7 @@ public interface GameObjectInterface extends Remote {
       * @throws Remote Exception
       */
      public String teach(String player) throws RemoteException;
+
+
+	public String ghoulRPS(String playerName, String option) throws RemoteException;
 }

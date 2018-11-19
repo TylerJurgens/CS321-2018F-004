@@ -374,4 +374,7 @@ public interface GameCoreInterface {
 	 * @return Message showing online friends
 	 */
 	public String viewOnlineFriends(String name);
+	
+	public String ghoulRPS(String playerName, String option);
+
 }

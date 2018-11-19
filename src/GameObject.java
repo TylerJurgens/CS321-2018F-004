@@ -73,6 +73,11 @@ public class GameObject extends UnicastRemoteObject implements GameObjectInterfa
 	public String pokeGhoul(String playerName) throws RemoteException {
 		return core.pokeGhoul(playerName);
 	}
+	
+	public String ghoulRPS(String playerName, String option) throws RemoteException{
+		return core.ghoulRPS(playerName, option);
+	}
+
 
 	/**
 	 * Pokes the ghoul in the current room

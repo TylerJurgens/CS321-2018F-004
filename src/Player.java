@@ -32,7 +32,25 @@ public class Player {
     private String lastPlayer = "";
     private boolean hasChallenge = false;
     private boolean inBattle = false;
-    private String challenger = " ";
+    private boolean fightingGhoul = false;
+    private Ghoul challengedGhoul;
+    public Ghoul getChallengedGhoul() {
+		return challengedGhoul;
+	}
+
+	public void setChallengedGhoul(Ghoul challengedGhoul) {
+		this.challengedGhoul = challengedGhoul;
+	}
+
+	public boolean isFightingGhoul() {
+		return fightingGhoul;
+	}
+
+	public void setFightingGhoul(boolean fightingGhoul) {
+		this.fightingGhoul = fightingGhoul;
+	}
+
+	private String challenger = " ";
     private String option = "";
     private String challengerOption = "";
     private boolean hasOption = false;
@@ -83,7 +101,7 @@ public class Player {
     public HashSet<String> getFilteredWords() {
         return filteredWords;
     }
-
+    
     /**
      * Adds a new word to the list of words filtered from this player's chat.
      * @param wordToAdd - word to be added to the filter list.
