@@ -85,6 +85,35 @@ public class GameObject extends UnicastRemoteObject implements GameObjectInterfa
 		return core.bribeGhoul(playerName,item);
 	}
 	
+	/**
+	 * Captures in the current room
+	 * @param playerName Player name
+	 * @return String message of spirit capture success or failure
+	 * @throws RemoteException
+	 */
+	public String capture(String playerName) throws RemoteException {
+		return core.capture(playerName);
+	}
+	
+	/**
+	 * Shows a list of captured spirits by a player
+	 * @param playerName Player name
+	 * @return String message of spirits captured by a player
+         * @throws RemoteException
+	 */
+        public String capturedSpirits(String playerName) throws RemoteException{
+		return core.capturedSpirits(playerName);
+	}
+
+	/**
+	 * Shows a list of spirits not captured by a player
+	 * @param playerName Player name
+	 * @return String message of spirits not captured by a player
+	 * @throws RemoteException
+	 */
+        public String uncapturedSpirits(String playerName) throws RemoteException{
+		return core.uncapturedSpirits(playerName);
+}
 	//public String giveToGhoul(String object, String playerName) {
 	//	return core.giveToGhoul(object, playerName);
 	//}

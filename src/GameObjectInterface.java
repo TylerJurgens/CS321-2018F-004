@@ -29,6 +29,29 @@ public interface GameObjectInterface extends Remote {
 	 */
 	public String bribeGhoul(String playerName, String item) throws RemoteException;
 
+	/**
+	 * Captures the spirit in the current room
+	 * @param playerName Player name
+	 * @return String message of spirit capture success or failure
+	 * @throws RemoteException
+	 */
+	public String capture(String playerName) throws RemoteException;
+        /**
+	 * Shows a list of captured spirits by a player
+	 * @param playerName Player name
+	 * @return String message of spirits captured by a player
+         * @throws RemoteException
+	 */
+        public String capturedSpirits(String playerName) throws RemoteException;
+
+        /**
+	 * Shows a list of spirits not captured by a player
+	 * @param playerName Player name
+	 * @return String message of spirits not captured by a player
+	 * @throws RemoteException
+	 */
+        public String uncapturedSpirits(String playerName) throws RemoteException;
+	
     /**
      * Sends a request to join the game.  
      * Returns with the status of the join.  On true, the server expects the client

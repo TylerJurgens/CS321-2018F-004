@@ -38,6 +38,8 @@ public class Player {
     private boolean hasOption = false;
     @JsonProperty("recovery")
     private ArrayList<String> recovery;
+    private ArrayList<String> captured_spirits;
+    private ArrayList<String> uncaptured_spirits;
     
     
 	public Player(@JsonProperty("name") String name, @JsonProperty("recovery") ArrayList<String> recovery) {
@@ -46,6 +48,8 @@ public class Player {
         this.name = name;
         this.recovery = recovery;
         this.currentInventory = new LinkedList<>();
+	this.captured_spirits = new ArrayList<String>();
+	this.uncaptured_spirits = new ArrayList<String>();
         this.money = 0;
     }
 
@@ -197,13 +201,40 @@ public class Player {
         }
         return ignoredPlayersList.toString();
     }
+    /**
+     * Getter method for captured spirits
+     * @return List of captured spirits
+     */
+    public ArrayList<String> getCapturedSpirits(){
+	return this.captured_spirits;
+}
+    /**
+     * Getter method for uncaptured spirits
+     * @return List of uncaptured spirits
+     */
+    public ArrayList<String> getUncapturedSpirits(){
+	return this.uncaptured_spirits;
+}
+    /**
+     *
+     * @param spirit to be captured
+     * @return void
+     */
+    public void capture_spirit(String spirit){
+
+	/* if the spirit is in the list of total spirits then it means
+	   it hasn't been caught and now it is, and can be added to the 
+	   list of captured ones */
+	if(this.uncaptured_spirits.remove(spirit) == true)
+		this.captured_spirits.add(spirit);
+    }	
 
     /**
      *
      * @param sentMessage - the Message being sent to this player.
      * @return - whether or not the sent message was successfully added to the set of received messages.
      */
-
+    
     public boolean receiveMessage(Message sentMessage) {
         boolean received = false;
 
