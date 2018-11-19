@@ -363,6 +363,10 @@ public class GameCore implements GameCoreInterface {
 					ghoul.setEngaged(false);
 				} else {
 					message = player.getName() + " wins with " + player.getOption();
+					player.setInBattle(false);
+					player.setChallengedGhoul(null);
+					ghoul.setChallenger(null);
+					ghoul.setEngaged(false);
 				}
 				return message;
 			case "PAPER":
@@ -384,6 +388,10 @@ public class GameCore implements GameCoreInterface {
 					ghoul.setEngaged(false);
 				} else {
 					message = player.getName() + " wins with " + player.getOption();
+					player.setInBattle(false);
+					player.setChallengedGhoul(null);
+					ghoul.setChallenger(null);
+					ghoul.setEngaged(false);
 				}
 				return message;
 			case "SCISSORS":
@@ -404,6 +412,10 @@ public class GameCore implements GameCoreInterface {
 					ghoul.setEngaged(false);
 					message = "It is a tie";
 				} else {
+					player.setInBattle(false);
+					player.setChallengedGhoul(null);
+					ghoul.setChallenger(null);
+					ghoul.setEngaged(false);
 					message = player.getName() + " wins with " + player.getOption();
 				}
 				return message;
