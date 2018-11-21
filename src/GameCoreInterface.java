@@ -31,7 +31,11 @@ public interface GameCoreInterface extends IAccount.Server {
 	public String bribeGhoul(String playerName,String item);
 
 	
-	//public String giveToGhoul(String object, String playerName);
+	/**
+	* Broadcasts a message to all room. 
+	* @param message Message to broadcast.
+	*/
+	public void broadcast(String message);
 
     
     /**

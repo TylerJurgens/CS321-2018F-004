@@ -1,4 +1,4 @@
-
+/*
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+*/
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +36,7 @@ public class GameCore implements GameCoreInterface {
     private final Map map;
     protected DailyLogger dailyLogger;
     private HashMap<Integer,Shop> shoplist;
-    private Ghoul ghoul;
+	private boolean isDay = true;
     private PrintWriter pw;
     private Bank bank;
     private ArrayList<Chatroom> chatrooms = new ArrayList<Chatroom>();
@@ -253,31 +255,29 @@ public class GameCore implements GameCoreInterface {
                  rewardThread.start();
                  
                  
-                // new thread awake and control the action of Ghoul.
+                // new thread awake and control the action of a Ghoul.
+				// this ghoul is always on the map, whether it is day or night
                 // team5 added in 10/13/2018
                 Thread awakeDayGhoul = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Random rand = new Random();
                         Room room = map.randomRoom();
-                        ghoul = new Ghoul(room.getId());
-                        room.hasGhoul = true;
-                        GameCore.this.broadcast(room, "You see a Ghoul appear in this room");
+                        Ghoul ghoul = new Ghoul(room.getId());
+						room.addGhoul(ghoul);
+						String ghoulName = ghoul.getTrueName();
+						GameCore.this.broadcast(room, "You see a ghoul named " + ghoulName + " appear in this room.");
 
                         while (true) {
                             try {
-                                // Ghoul move in each 10-15 seconds.
-                                Thread.sleep(1200000 + rand.nextInt(500000));
+                                // Ghoul move in each ? seconds.
+                                Thread.sleep(10000);//1200000 + rand.nextInt(500000));
 
                                 // make Ghoul walk to other room;
                                 GameCore.this.ghoulWander(ghoul, room);
-                                room.hasGhoul = false;
-                                GameCore.this.broadcast(room, "You see a Ghoul leave this room");
+                                GameCore.this.broadcast(room, "You see a Ghoul named " + ghoulName + "leave this room.");
                                 room = map.findRoom(ghoul.getRoom());
-                                room.hasGhoul = true;
-                                GameCore.this.broadcast(room, "You see a Ghoul enter this room");
-
-
+                                GameCore.this.broadcast(room, "You see a Ghoul named " + ghoulName + " enter this room.");
                             } catch (InterruptedException ex) {
                                 Logger.getLogger(GameObject.class.getName()).log(Level.SEVERE, null, ex);
                             }
@@ -286,16 +286,86 @@ public class GameCore implements GameCoreInterface {
                 });
                 awakeDayGhoul.setDaemon(true);
                 awakeDayGhoul.setName("awakeDayGhoul");
+				
+				
+				// new thread awake and control the action of nightGhoul
+				// nightGhoul just activity in night. It wil affected by the day-night cycle
+				Thread awakeNightGhoul = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						Random rand = new Random();
+						Room room = map.randomRoom();
+						Ghoul ghoul = new Ghoul(0);
+						String ghoulName = ghoul.getTrueName();
+						while(true) {
+							try {
+								while(isDay) {
+									//check if ghoul stay in some room; if so, expel it.
+									if(ghoul.getRoom() != 0) {
+										room.removeGhoul(ghoul);
+										ghoul.setRoom(0);
+										GameCore.this.broadcast(room, "You see a night Ghoul named " + ghoulName + " disappear under sunshine.");
+									}
+									Thread.sleep(10); //block the thread, because it is in the daytime
+								}
+								
+								//check if ghoul already have their room; if not, give some room to it
+								if(ghoul.getRoom() == 0) {
+									room.addGhoul(ghoul);
+									GameCore.this.broadcast(room, "You see a night Ghoul named " + ghoulName + " appear in this room.");
+								}
+								
+								Thread.sleep(10000);//6000 + rand.nextInt(4000)); //move faster than dayGhoul
+								// make ghoul walk to other room
+								GameCore.this.ghoulWander(ghoul, room);
+								GameCore.this.broadcast(room, "You see a night Ghoul named " + ghoulName + " leave this room.");
+								room = map.findRoom(ghoul.getRoom());
+								GameCore.this.broadcast(room, "You see a night Ghoul named " + ghoulName + " enter this room.");
+							} catch(InterruptedException ex) {
+								Logger.getLogger(GameObject.class.getName()).log(Level.SEVERE, null, ex);
+							}
+						}
+					}
+				});
+				awakeNightGhoul.setDaemon(true);
+				awakeNightGhoul.setName("awakeNightGhoul");
+				
+				
+				// make day/night cycle
+				Thread dayNightCycle = new Thread(new Runnable() {
+					boolean night = false;
+					@Override
+					public void run() {
+						while(true) {
+							try {
+								isDay = true;
+								GameCore.this.broadcast("Morning!");
+								Thread.sleep(35000);
+								isDay = false;
+								GameCore.this.broadcast("Night!");
+								Thread.sleep(35000);
+							} catch(InterruptedException ex) {
+								Logger.getLogger(GameObject.class.getName()).log(Level.SEVERE, null, ex);
+							}
+						}
+					}
+				});
+				dayNightCycle.setDaemon(true);
+				dayNightCycle.setName("dayNightCycle");
+				
 
                 allThreads.add(hbThread);
                 allThreads.add(objectThread);
                 allThreads.add(awakeDayGhoul);
                 allThreads.add(allowanceThread);
+				allThreads.add(dayNightCycle);
                 
                 hbThread.start();
                 objectThread.start();
                 awakeDayGhoul.start();
                 allowanceThread.start();
+				dayNightCycle.start();
+				awakeNightGhoul.start();
             }
     
     protected void shutdown() {
@@ -306,25 +376,24 @@ public class GameCore implements GameCoreInterface {
     	friendsManager.shutdown();
     	accountManager.shutdown();
     }
+	
 
+	/**
+	* let ghoul Wander to nearby room; help method, ignore it.
+	* @param g the ghoul that need to wander
+	* @param room The room that exist ghoul at first (before ghoul start to wander). 
+	*/
 	public void ghoulWander(Ghoul g, Room room) {
 		Random rand = new Random();
-		int[] candinateRoom = new int[4];
-
-		// easiest way to get all possible room;
-		candinateRoom[0] = room.getLink(Direction.NORTH);
-		candinateRoom[1] = room.getLink(Direction.SOUTH);
-		candinateRoom[2] = room.getLink(Direction.WEST);
-		candinateRoom[3] = room.getLink(Direction.EAST);
-
-		// random walk.
-		while (true) {
-			int roomID = candinateRoom[rand.nextInt(4)];
-			if (roomID != 0) {
-				g.setRoom(roomID);
-				return;
-			}
-		}
+		LinkedList<Room> candidateRoom = room.getNearByRoom(map);
+		int size = candidateRoom.size();
+		
+		room.removeGhoul(g);
+		//random walk
+		room = candidateRoom.get(rand.nextInt(size));
+		
+		g.setRoom(room.getId());
+		room.addGhoul(g);
     }
     
 
@@ -483,7 +552,7 @@ public class GameCore implements GameCoreInterface {
 		if(player == null){
 			return null;
 		}
-		if(room.hasGhoul){
+		if(room.hasGhoul()){
 			//LinkedList<Item> itemList = player.getCurrentInventory();
 			//boolean giveAble = false;
 			//if (player.currentyInventory.size() > 0){
@@ -495,6 +564,12 @@ public class GameCore implements GameCoreInterface {
 				//	giveAble = itemList.remove(thing);
 				//	break;
 				//}
+				
+ 			LinkedList<Ghoul> ghouls = room.getGhouls();
+ 			if (ghouls.isEmpty()) {return "There is no ghoul in this room.";}
+ 			Random rand = new Random();
+ 			Ghoul ghoul = ghouls.get(rand.nextInt(ghouls.size()));
+				
             boolean giveAble = false;
             if (object != null){
                 giveAble = true;
@@ -512,7 +587,7 @@ public class GameCore implements GameCoreInterface {
 
 				ghoul.modifyAngryLevel(-1);
 				int angryLv = ghoul.getAngryLevel();
-				String message = "Ghoul gets " + item + ", " + "and its anger level decreases to " + angryLv + ".";
+				String message = "Ghoul [" + ghoul.getTrueName() + "] gets " + item + ", " + "and its anger level decreases to " + angryLv + ".";
 				return  message;
 			}else{
 				return "Do not have this item......";
@@ -528,7 +603,7 @@ public class GameCore implements GameCoreInterface {
 		Room room = this.map.findRoom(player.getCurrentRoom());
 
 		if (player != null) {
-			if (!room.hasGhoul) {
+			if (!room.hasGhoul()) {
 				return "There is no ghoul in this room.";
 			}
 
@@ -539,6 +614,12 @@ public class GameCore implements GameCoreInterface {
 			} catch (Exception e){
 				e.printStackTrace();
 			}
+			
+			//random select ghoul in the room; 
+ 			LinkedList<Ghoul> ghouls = room.getGhouls();
+ 			if (ghouls.isEmpty()) {return "There is no ghoul in this room.";}
+ 			Random rand = new Random();
+ 			Ghoul ghoul = ghouls.get(rand.nextInt(ghouls.size()));
 
 			ghoul.modifyAngryLevel(1);
 			int angerLvl = ghoul.getAngryLevel();
@@ -897,34 +978,18 @@ public class GameCore implements GameCoreInterface {
 		}
 		return "No item by the name of " + itemName + " is in your inventory.";
 	}
-	//Same functionality as bribe_ghoul, not currently used
-	//public String giveToGhoul(String object, String playerName) {
-	//	Player player = playerList.findPlayer(playerName);
-	//	Room room = this.map.findRoom(player.getCurrentRoom());
-	//	boolean isItem = false;
-		
-	//	if (player != null) {
-	//		if (!room.hasGhoul) {
-	//			return "There is no ghoul in this room.";
-	//		}
-	//		else {
-	//			for (String s : player.getCurrentInventory()) {
-	//				if (s.equals(object)) {
-	//					isItem = true;
-	//				}
-	//			}
-	//			if (! isItem) {
-	//				return "you don't have" + object + "!";
-	//			}
-	//			player.getCurrentInventory().remove(object);
-	//			ghoul.modifyAngryLevel(-1);
-	//			return("the ghoul is a little more calm");
-	//		}
-	//	}
-	//	else {
-	//		return "failed to give ghoul item.";
-	//	}
-	//}
+	
+	/**
+	 * Broadcasts a message to all room. 
+	 * @param message Message to broadcast.
+	 */
+	public void broadcast(String message) {
+		for (Player player : this.playerList) {
+			dailyLogger.write(message);
+			String newMessage = player.filterMessage(message);
+			player.getReplyWriter().println(newMessage);
+		}
+	}
 
 	/**
 	 * Broadcasts a message to all other players in the same room as player.
@@ -1161,12 +1226,21 @@ public class GameCore implements GameCoreInterface {
 			// Return a string representation of the room state.
 			// return room.toString(this.playerList, player);
 			// modified in 2018.10.17, which for player can look ghoul.
-			if (room.hasGhoul) {
-				String watchGhoul = "\n\nTHERE IS A GHOUL IN THE ROOM!!!!!!\n\n";
-				return room.toString(this.playerList, player) + watchGhoul;
-			} else {
-				return room.toString(this.playerList, player);
+			String roomInfo = "";
+			if (room.hasGhoul()) {
+				roomInfo = "\n\nGhoul ";
+				for(Ghoul g : room.getGhouls()) {
+					roomInfo += "["+g.getTrueName()+"], ";
+				}
+				roomInfo += " in the room!\n";
 			}
+			if(isDay) {
+				roomInfo += "\nIt is day time!\n";
+			} else {
+				roomInfo += "\nIt is night time!\n";
+			}
+			
+			return room.toString(this.playerList, player) + roomInfo;
 		}
 		// No such player exists
 		else {

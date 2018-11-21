@@ -22,7 +22,8 @@ public class Room {
     //list of NPCs in a room, list in case additional NPCs are added to the game
     private HashMap<String, NPC> npcs;
     //add tem state check for ghoul
-    public boolean hasGhoul = false;
+    private boolean hasGhoul = false;
+	private LinkedList<Ghoul> ghouls;
 
     
     public Room(int id, String room_type, String title, String description) {
@@ -35,6 +36,7 @@ public class Room {
         this.description = description;
         this.room_type = room_type;
         this.npcs = new HashMap<>();
+		this.ghouls = new LinkedList<>();
     }
 
     public Room(int id, String room_type, String title, String description, HashMap<String, NPC> npcs) {
@@ -46,6 +48,7 @@ public class Room {
 	    this.room_type = room_type;
         this.description = description;
         this.npcs = npcs;
+		this.ghouls = new LinkedList<>();
     }
     
     public String toString(PlayerList playerList, Player player) {
@@ -61,6 +64,55 @@ public class Room {
         result += "...................\n";
         return result;
     }
+	
+	/**
+	* add ghoul
+	* @param g ghoul will be added.
+	* @return if the ghoul were added successfully. 
+	*/
+	public boolean addGhoul(Ghoul g) {
+		boolean inf = this.ghouls.add(g);
+		this.hasGhoul = !(this.ghouls.isEmpty());
+		return inf;
+	}
+	
+	/**
+	* remove ghoul
+	* @param g ghoul will be removed.
+	* @return if the ghoul were removed successfully. 
+	*/
+	public boolean removeGhoul(Ghoul g) {
+		boolean inf = this.ghouls.remove(g);
+		this.hasGhoul = !(this.ghouls.isEmpty());
+		return inf;
+	}
+	
+	/**
+	* given all ghoul in the room
+	* @return ghoul's collection in this room. 
+	*/
+	public LinkedList<Ghoul> getGhouls() {
+		return this.ghouls;
+	}
+	
+	/**
+	* check if any ghoul in the room
+	* @return if the ghouls in the room. 
+	*/
+	public boolean hasGhoul(){
+		this.hasGhoul = !(this.ghouls.isEmpty());
+		return this.hasGhoul;
+	}
+	
+	public LinkedList<Room> getNearByRoom(Map map) {
+		LinkedList<Room> rooms = new LinkedList<Room>();
+		for(Exit exit : this.exits) {
+			if(map.findRoom(exit.getRoom()) != null) {
+				rooms.add(map.findRoom(exit.getRoom()));
+			}
+		}
+		return rooms;
+	}
     
     
     public int getId() {
